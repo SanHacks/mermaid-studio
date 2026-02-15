@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
-import { Maximize2, ZoomIn, ZoomOut } from 'lucide-react';
+import { Maximize2, ZoomIn, ZoomOut, RefreshCw } from 'lucide-react';
 
 interface PreviewProps {
     mermaidCode: string;
@@ -10,6 +10,11 @@ interface PreviewProps {
 const Preview: React.FC<PreviewProps> = ({ mermaidCode, theme }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [error, setError] = useState<string | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const handleRefresh = () => {
+        setRefreshKey(prev => prev + 1);
+    };
 
     useEffect(() => {
         mermaid.initialize({
@@ -38,26 +43,33 @@ const Preview: React.FC<PreviewProps> = ({ mermaidCode, theme }) => {
 
         const timeoutId = setTimeout(renderDiagram, 300);
         return () => clearTimeout(timeoutId);
-    }, [mermaidCode]);
+    }, [mermaidCode, refreshKey]);
 
     return (
-        <div className="h-full flex flex-col bg-slate-900 border-l border-slate-700/50">
-            <div className="px-4 py-2 bg-slate-800/50 border-b border-slate-700/50 flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Preview</span>
+        <div className="h-full flex flex-col bg-[var(--bg-primary)] border-l border-[var(--border-color)] transition-colors duration-300">
+            <div className="px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border-color)] flex items-center justify-between">
+                <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Preview</span>
                 <div className="flex gap-1">
-                    <button className="p-1 hover:bg-slate-700 rounded text-slate-400">
+                    <button
+                        onClick={handleRefresh}
+                        className="p-1 hover:bg-[var(--bg-primary)] rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors mr-1"
+                        title="Refresh Diagram"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 ${refreshKey > 0 ? 'animate-spin' : ''}`} style={{ animationIterationCount: 1, animationDuration: '0.5s' }} />
+                    </button>
+                    <button className="p-1 hover:bg-[var(--bg-primary)] rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                         <ZoomIn className="w-3.5 h-3.5" />
                     </button>
-                    <button className="p-1 hover:bg-slate-700 rounded text-slate-400">
+                    <button className="p-1 hover:bg-[var(--bg-primary)] rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                         <ZoomOut className="w-3.5 h-3.5" />
                     </button>
-                    <button className="p-1 hover:bg-slate-700 rounded text-slate-400 ml-1">
+                    <button className="p-1 hover:bg-[var(--bg-primary)] rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors ml-1">
                         <Maximize2 className="w-3.5 h-3.5" />
                     </button>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:20px_20px] p-8 flex items-center justify-center min-h-0">
+            <div className="flex-1 overflow-auto bg-[var(--bg-secondary)] bg-[radial-gradient(var(--border-color)_1px,transparent_1px)] [background-size:20px_20px] p-8 flex items-center justify-center min-h-0">
                 {error ? (
                     <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg flex items-start gap-3 max-w-md animate-in fade-in slide-in-from-top-2">
                         <div className="mt-0.5">⚠️</div>

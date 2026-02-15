@@ -43,6 +43,10 @@ export function useDiagram() {
     localStorage.getItem('diagram-studio-theme') || 'dark'
   );
 
+  const [appMode, setAppMode] = useState<'light' | 'dark'>(
+    (localStorage.getItem('diagram-studio-app-mode') as 'light' | 'dark') || 'dark'
+  );
+
   const { saveToStorage, loadFromStorage } = useSQLite();
 
   // Persist current diagram
@@ -54,6 +58,16 @@ export function useDiagram() {
   useEffect(() => {
     localStorage.setItem('diagram-studio-theme', theme);
   }, [theme]);
+
+  // Persist app mode
+  useEffect(() => {
+    localStorage.setItem('diagram-studio-app-mode', appMode);
+    if (appMode === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [appMode]);
 
   // Save diagram to history
   const saveToHistory = useCallback((name: string, code: string, theme: string) => {
@@ -108,6 +122,8 @@ export function useDiagram() {
     setMermaidCode,
     theme,
     setTheme,
+    appMode,
+    setAppMode,
     saveToHistory,
     loadFromHistory,
     getHistoryList,

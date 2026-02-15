@@ -16,8 +16,8 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ theme, onThemeChange }) =
     ];
 
     return (
-        <div className="flex items-center gap-3 bg-slate-800/40 p-1.5 rounded-xl border border-slate-700/50">
-            <div className="pl-2 pr-1 text-slate-400">
+        <div className="flex items-center gap-3 bg-[var(--bg-secondary)] p-1.5 rounded-xl border border-[var(--border-color)]">
+            <div className="pl-2 pr-1 text-[var(--text-secondary)]">
                 <Palette className="w-4 h-4" />
             </div>
             <div className="flex gap-1">
@@ -28,8 +28,8 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ theme, onThemeChange }) =
                         className={`
               px-3 py-1.5 rounded-lg text-sm font-medium transition-all
               ${theme === t.id
-                                ? 'bg-slate-700 text-white shadow-sm border border-slate-600'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'}
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)]'}
             `}
                     >
                         {t.name}
