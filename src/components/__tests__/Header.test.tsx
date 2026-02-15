@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import Header from '../Header';
 import { describe, it, expect, vi } from 'vitest';
-import React from 'react';
 
 describe('Header', () => {
     const defaultProps = {
