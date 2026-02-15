@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SplitPane from 'react-split-pane';
 import Editor from './components/Editor';
 import Preview from './components/Preview';
@@ -7,20 +7,22 @@ import ThemeSelector from './components/ThemeSelector';
 import Header from './components/Header';
 import ExampleGallery from './components/ExampleGallery';
 import AuthModal from './components/AuthModal';
+import AIPrompt from './components/AIPrompt';
+import SettingsModal from './components/SettingsModal';
 import { useDiagram } from './hooks/useDiagram';
 
 function App() {
-  const { mermaidCode, setMermaidCode, theme, setTheme, appMode, setAppMode } = useDiagram();
+  const {
+    mermaidCode, setMermaidCode,
+    theme, setTheme,
+    appMode, setAppMode,
+    geminiApiKey, setGeminiApiKey,
+    generateAI,
+    user, logout
+  } = useDiagram();
+
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      // Handle resize if needed
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <div className={`min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] selection:bg-blue-500/30 font-inter transition-colors duration-300`}>
@@ -28,6 +30,9 @@ function App() {
         onLoginClick={() => setIsAuthOpen(true)}
         appMode={appMode}
         onAppModeChange={setAppMode}
+        user={user}
+        onLogout={logout}
+        onSettingsClick={() => setIsSettingsOpen(true)}
       />
 
       <main className="container mx-auto px-4 py-8">
@@ -46,6 +51,14 @@ function App() {
             theme={theme}
           />
         </div>
+
+        {user && (
+          <AIPrompt
+            onGenerate={generateAI}
+            hasApiKey={!!geminiApiKey}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+          />
+        )}
 
         <div className="mb-8">
           <ExampleGallery onSelect={setMermaidCode} />
@@ -74,6 +87,7 @@ function App() {
           </SplitPane>
         </div>
 
+        {/* Features grid */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] hover:border-blue-500 transition-colors group">
             <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
@@ -123,10 +137,14 @@ function App() {
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        onSuccess={(user) => {
-          console.log('User signed in:', user);
-          // Header handles user sync via storage/interval
-        }}
+        onSuccess={() => { }}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        geminiApiKey={geminiApiKey}
+        onSaveApiKey={setGeminiApiKey}
       />
     </div>
   );

@@ -1,50 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Share2, Save, History, Settings, LogIn, ChevronDown, Sun, Moon } from 'lucide-react';
 
 interface HeaderProps {
     onLoginClick: () => void;
     appMode: 'light' | 'dark';
     onAppModeChange: (mode: 'light' | 'dark') => void;
+    user: { name: string; email: string } | null;
+    onLogout: () => void;
+    onSettingsClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLoginClick, appMode, onAppModeChange }) => {
-    const [user, setUser] = useState<{ name: string; email: string } | null>(null);
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem('diagram-studio-user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-
-        // Listen for storage changes (e.g. from the AuthModal)
-        const handleStorageChange = () => {
-            const updatedUser = localStorage.getItem('diagram-studio-user');
-            setUser(updatedUser ? JSON.parse(updatedUser) : null);
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-        // Also listen for custom events if needed, but storage event works across tabs
-        // For local tab changes, we might need a custom event or a shared state.
-        // Let's add a small interval check as a fallback for the same tab
-        const interval = setInterval(() => {
-            const currentUser = localStorage.getItem('diagram-studio-user');
-            const parsedUser = currentUser ? JSON.parse(currentUser) : null;
-            if (JSON.stringify(parsedUser) !== JSON.stringify(user)) {
-                setUser(parsedUser);
-            }
-        }, 1000);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-            clearInterval(interval);
-        };
-    }, [user]);
-
-    const handleLogout = () => {
-        localStorage.removeItem('diagram-studio-user');
-        setUser(null);
-    };
-
+const Header: React.FC<HeaderProps> = ({
+    onLoginClick,
+    appMode,
+    onAppModeChange,
+    user,
+    onLogout,
+    onSettingsClick
+}) => {
     return (
         <header className="border-b border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -78,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, appMode, onAppModeChange 
                                 <span className="text-[10px] text-[var(--text-secondary)]">Premium Plan</span>
                             </div>
                             <button
-                                onClick={handleLogout}
+                                onClick={onLogout}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] transition-all active:scale-95 group text-[var(--text-primary)]"
                             >
                                 <div className="w-6 h-6 bg-blue-500 text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
@@ -102,7 +75,10 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, appMode, onAppModeChange 
                     <button className="p-2 hover:bg-[var(--bg-secondary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" title="History">
                         <History className="w-5 h-5" />
                     </button>
-                    <button className="p-2 hover:bg-[var(--bg-secondary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" title="Settings">
+                    <button
+                        onClick={onSettingsClick}
+                        className="p-2 hover:bg-[var(--bg-secondary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" title="Settings"
+                    >
                         <Settings className="w-5 h-5" />
                     </button>
                     <div className="h-6 w-[1px] bg-[var(--border-color)] mx-2" />

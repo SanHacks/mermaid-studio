@@ -8,6 +8,9 @@ describe('Header', () => {
         onLoginClick: vi.fn(),
         appMode: 'dark' as const,
         onAppModeChange: vi.fn(),
+        user: null,
+        onLogout: vi.fn(),
+        onSettingsClick: vi.fn(),
     };
 
     it('renders the title', () => {
@@ -25,5 +28,12 @@ describe('Header', () => {
     it('shows the correct icon for light mode', () => {
         render(<Header {...defaultProps} appMode="light" />);
         expect(screen.getByTitle('Switch to dark mode')).toBeDefined();
+    });
+
+    it('shows user name when logged in', () => {
+        const user = { name: 'Alice', email: 'alice@example.com' };
+        render(<Header {...defaultProps} user={user} />);
+        expect(screen.getByText('Alice')).toBeDefined();
+        expect(screen.getByText('Premium Plan')).toBeDefined();
     });
 });
