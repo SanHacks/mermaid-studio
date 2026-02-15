@@ -22,14 +22,14 @@ const Header: React.FC<HeaderProps> = ({
         <header className="border-b border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[var(--bg-secondary)] rounded-xl flex items-center justify-center shadow-sm border border-[var(--border-color)]">
-                        <Share2 className="w-5 h-5 text-blue-500" />
+                    <div className="w-10 h-10 bg-[var(--accent-primary)] rounded-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 duration-300">
+                        <Share2 className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-[var(--text-primary)]">
+                        <h1 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
                             Diagram Studio
                         </h1>
-                        <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest font-semibold">
+                        <p className="text-[10px] text-[var(--accent-primary)] uppercase tracking-widest font-bold">
                             Professional Editor
                         </p>
                     </div>
@@ -52,9 +52,9 @@ const Header: React.FC<HeaderProps> = ({
                             </div>
                             <button
                                 onClick={onLogout}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-secondary)] hover:bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] transition-all active:scale-95 group text-[var(--text-primary)]"
+                                className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-secondary)] hover:bg-[var(--border-color)] rounded-xl border border-[var(--border-color)] transition-all active:scale-95 group text-[var(--text-primary)]"
                             >
-                                <div className="w-6 h-6 bg-blue-500 text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
+                                <div className="w-6 h-6 bg-[var(--accent-primary)] text-white rounded-lg flex items-center justify-center text-[10px] font-bold">
                                     {user.name?.charAt(0).toUpperCase() || 'U'}
                                 </div>
                                 <ChevronDown className="w-3 h-3 text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors" />
@@ -82,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({
                         <Settings className="w-5 h-5" />
                     </button>
                     <div className="h-6 w-[1px] bg-[var(--border-color)] mx-2" />
-                    <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-all active:scale-95 shadow-sm">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white rounded-lg font-bold transition-all active:scale-95 shadow-lg shadow-[var(--accent-primary)]/20">
                         <Save className="w-4 h-4" />
                         <span className="hidden sm:inline">Save Project</span>
                     </button>

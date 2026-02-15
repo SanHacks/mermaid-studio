@@ -35,23 +35,23 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose} />
 
-            <div className="relative w-full max-w-md bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="relative w-full max-w-md bg-[var(--bg-secondary)] rounded-3xl border border-[var(--border-color)] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
                 <div className="p-8">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                                <ShieldCheck className="w-6 h-6 text-blue-400" />
+                            <div className="w-10 h-10 bg-[var(--accent-primary)]/20 rounded-xl flex items-center justify-center">
+                                <ShieldCheck className="w-6 h-6 text-[var(--accent-primary)]" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-white tracking-tight">
+                                <h2 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
                                     {isLogin ? 'Welcome Back' : 'Join the Studio'}
                                 </h2>
-                                <p className="text-xs text-slate-400">Save your diagrams to the cloud</p>
+                                <p className="text-xs text-[var(--text-secondary)]">Save your diagrams to the cloud</p>
                             </div>
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 hover:bg-slate-800 rounded-full text-slate-500 transition-colors"
+                            className="p-2 hover:bg-[var(--bg-primary)] rounded-full text-[var(--text-secondary)] transition-colors"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -60,14 +60,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {!isLogin && (
                             <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-400 ml-1">Full Name</label>
+                                <label className="text-xs font-semibold text-[var(--text-secondary)] ml-1">Full Name</label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
                                     <input
                                         type="text"
                                         required
                                         placeholder="John Doe"
-                                        className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                        className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50 transition-all"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     />
@@ -76,14 +76,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                         )}
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-400 ml-1">Email Address</label>
+                            <label className="text-xs font-semibold text-[var(--text-secondary)] ml-1">Email Address</label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
                                 <input
                                     type="email"
                                     required
                                     placeholder="name@company.com"
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                    className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50 transition-all"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
@@ -91,14 +91,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-400 ml-1">Password</label>
+                            <label className="text-xs font-semibold text-[var(--text-secondary)] ml-1">Password</label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
                                 <input
                                     type="password"
                                     required
                                     placeholder="••••••••"
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                    className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50 transition-all"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
@@ -109,7 +109,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                             type="submit"
                             disabled={loading}
                             className={`
-                w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2
+                w-full bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-[var(--accent-primary)]/20 flex items-center justify-center gap-2
                 ${loading ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}
               `}
                         >
@@ -121,11 +121,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                         </button>
                     </form>
 
-                    <p className="mt-6 text-center text-sm text-slate-500">
+                    <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
                         {isLogin ? "Don't have an account?" : "Already have an account?"}
                         <button
                             onClick={() => setIsLogin(!isLogin)}
-                            className="ml-1 text-blue-400 hover:text-blue-300 font-semibold"
+                            className="ml-1 text-[var(--accent-primary)] hover:text-[var(--accent-hover)] font-semibold"
                         >
                             {isLogin ? 'Sign Up' : 'Log In'}
                         </button>

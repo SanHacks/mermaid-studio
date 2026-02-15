@@ -124,22 +124,22 @@ interface ExampleGalleryProps {
 
 const ExampleGallery: React.FC<ExampleGalleryProps> = ({ onSelect }) => {
     return (
-        <div className="p-4 bg-slate-900/60 rounded-2xl border border-slate-700/50 backdrop-blur-md">
+        <div className="p-4 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] shadow-[var(--card-shadow)]">
             <div className="flex items-center gap-2 mb-4">
-                <List className="w-5 h-5 text-blue-400" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Templates</h3>
+                <List className="w-5 h-5 text-[var(--accent-primary)]" />
+                <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wider">Templates</h3>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {EXAMPLES.map((example) => (
                     <button
                         key={example.id}
                         onClick={() => onSelect(example.code)}
-                        className="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:bg-slate-700/60 hover:border-blue-500/50 transition-all group active:scale-95"
+                        className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] hover:border-[var(--accent-primary)] transition-all group active:scale-95 hover:shadow-lg"
                     >
-                        <div className="mb-2 text-slate-400 group-hover:text-blue-400 transition-colors">
+                        <div className="mb-2 text-[var(--text-secondary)] group-hover:text-[var(--accent-primary)] transition-colors">
                             {example.icon}
                         </div>
-                        <span className="text-[10px] font-medium text-slate-300 text-center">
+                        <span className="text-[10px] font-bold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] text-center transition-colors">
                             {example.name}
                         </span>
                     </button>
