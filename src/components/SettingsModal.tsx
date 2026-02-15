@@ -6,15 +6,21 @@ interface SettingsModalProps {
     onClose: () => void;
     geminiApiKey: string;
     onSaveApiKey: (key: string) => void;
+    geminiModel: string;
+    onSaveModel: (model: string) => void;
 }
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, geminiApiKey, onSaveApiKey }) => {
+const SettingsModal: React.FC<SettingsModalProps> = ({
+    isOpen, onClose, geminiApiKey, onSaveApiKey, geminiModel, onSaveModel
+}) => {
     const [tempKey, setTempKey] = useState(geminiApiKey);
+    const [tempModel, setTempModel] = useState(geminiModel);
 
     if (!isOpen) return null;
 
     const handleSave = () => {
         onSaveApiKey(tempKey);
+        onSaveModel(tempModel);
         onClose();
     };
 
@@ -45,10 +51,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, geminiAp
                     <div className="space-y-8">
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
-                                <Key className="w-4 h-4 text-amber-500" />
+                                <Shield className="w-4 h-4 text-blue-500" />
                                 <span>AI Configuration</span>
                             </div>
-                            <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl p-6 space-y-4">
+                            <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl p-6 space-y-5">
                                 <div className="space-y-1.5">
                                     <div className="flex justify-between items-center">
                                         <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Gemini API Key</label>
@@ -62,7 +68,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, geminiAp
                                         </a>
                                     </div>
                                     <div className="relative">
-                                        <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
+                                        <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
                                         <input
                                             type="password"
                                             placeholder="Enter your Google Gemini API key"
@@ -71,10 +77,33 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, geminiAp
                                             onChange={(e) => setTempKey(e.target.value)}
                                         />
                                     </div>
-                                    <p className="text-[10px] text-[var(--text-secondary)] mt-2 leading-relaxed px-1">
-                                        Your API key is stored locally in your browser and never sent to our servers. Calls are made directly to Google's Generative AI API.
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Model Selection</label>
+                                    <div className="relative">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center">
+                                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                                        </div>
+                                        <select
+                                            className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl py-3 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all appearance-none cursor-pointer"
+                                            value={tempModel}
+                                            onChange={(e) => setTempModel(e.target.value)}
+                                        >
+                                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Free)</option>
+                                            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                                            <option value="gemini-robotics-er-1.5-preview">Robotics Preview (Thinking)</option>
+                                            <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Exp</option>
+                                        </select>
+                                    </div>
+                                    <p className="text-[10px] text-[var(--text-secondary)] mt-2 leading-relaxed px-1 italic">
+                                        TIP: Models with 'preview' will enable Thinking Config.
                                     </p>
                                 </div>
+
+                                <p className="text-[10px] text-[var(--text-secondary)] mt-4 leading-relaxed px-1 border-t border-[var(--border-color)] pt-3">
+                                    Your data is stored locally in your browser. Calls are made directly to Google's Generative AI API.
+                                </p>
                             </div>
                         </div>
 

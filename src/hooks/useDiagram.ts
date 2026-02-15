@@ -51,6 +51,10 @@ export function useDiagram() {
     localStorage.getItem('diagram-studio-gemini-key') || ''
   );
 
+  const [geminiModel, setGeminiModel] = useState(
+    localStorage.getItem('diagram-studio-gemini-model') || 'gemini-1.5-flash'
+  );
+
   const [user, setUser] = useState<{ name: string; email: string } | null>(() => {
     const storedUser = localStorage.getItem('diagram-studio-user');
     return storedUser ? JSON.parse(storedUser) : null;
@@ -66,6 +70,9 @@ export function useDiagram() {
 
       const storedKey = localStorage.getItem('diagram-studio-gemini-key');
       setGeminiApiKey(storedKey || '');
+
+      const storedModel = localStorage.getItem('diagram-studio-gemini-model');
+      if (storedModel) setGeminiModel(storedModel);
     };
 
     window.addEventListener('storage', handleStorage);
@@ -87,6 +94,11 @@ export function useDiagram() {
     localStorage.setItem('diagram-studio-gemini-key', geminiApiKey);
   }, [geminiApiKey]);
 
+  // Persist Model
+  useEffect(() => {
+    localStorage.setItem('diagram-studio-gemini-model', geminiModel);
+  }, [geminiModel]);
+
   // Link Mermaid theme with App Mode
   useEffect(() => {
     if (appMode === 'dark' && theme !== 'dark') {
@@ -94,7 +106,7 @@ export function useDiagram() {
     } else if (appMode === 'light' && theme === 'dark') {
       setTheme('default');
     }
-  }, [appMode]);
+  }, [appMode, theme]);
 
   // Persist app mode
   useEffect(() => {
@@ -111,23 +123,32 @@ export function useDiagram() {
     if (!geminiApiKey) throw new Error('Gemini API key is required');
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Generate only valid Mermaid diagram code for the following request. Do not include markdown formatting or explanations. Just the mermaid code. Request: ${prompt}`
-            }]
-          }]
-        })
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+
+      const contents = [
+        {
+          role: 'user',
+          parts: [{ text: `Generate only valid Mermaid diagram code for the following request. Do not include markdown formatting or explanations. Just the mermaid code. Request: ${prompt}` }]
+        }
+      ];
+
+      const generationConfig: any = {};
+      const tools = [{ googleSearch: {} }];
+
+      if (geminiModel.includes('preview')) {
+        generationConfig.thinkingConfig = { thinkingBudget: -1 };
+      }
+
+      const result = await ai.models.generateContent({
+        model: geminiModel,
+        contents,
+        generationConfig,
+        tools
       });
 
-      const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
-
-      let code = data.candidates[0].content.parts[0].text.trim();
-      // Remove markdown blocks if AI included them
+      if (!result.text) throw new Error('AI returned an empty response');
+      let code = result.text.trim();
       code = code.replace(/^```mermaid\n?/, '').replace(/\n?```$/, '');
 
       setMermaidCode(code);
@@ -136,7 +157,7 @@ export function useDiagram() {
       console.error('AI Generation failed:', error);
       throw error;
     }
-  }, [geminiApiKey]);
+  }, [geminiApiKey, geminiModel]);
 
   // Save diagram to history
   const saveToHistory = useCallback((name: string, code: string, theme: string) => {
@@ -200,6 +221,8 @@ export function useDiagram() {
     setAppMode,
     geminiApiKey,
     setGeminiApiKey,
+    geminiModel,
+    setGeminiModel,
     generateAI,
     user,
     logout,

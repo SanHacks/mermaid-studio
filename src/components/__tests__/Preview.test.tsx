@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import Preview from '../Preview';
 import { describe, it, expect, vi } from 'vitest';
-import React from 'react';
 
 // Mock mermaid to avoid rendering issues in test environment
 vi.mock('mermaid', () => ({

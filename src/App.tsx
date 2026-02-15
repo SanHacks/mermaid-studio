@@ -17,6 +17,7 @@ function App() {
     theme, setTheme,
     appMode, setAppMode,
     geminiApiKey, setGeminiApiKey,
+    geminiModel, setGeminiModel,
     generateAI,
     user, logout
   } = useDiagram();
@@ -127,9 +128,9 @@ function App() {
             Diagram Studio Premium MVP • Crafted for visual excellence
           </p>
           <div className="mt-4 flex justify-center gap-6 text-[var(--text-secondary)] opacity-70">
-            <a href="#" className="hover:text-blue-400 transition-colors">Documentation</a>
-            <a href="#" className="hover:text-blue-400 transition-colors">Examples</a>
-            <a href="#" className="hover:text-blue-400 transition-colors">Privacy</a>
+            <a href="/" className="hover:text-blue-400 transition-colors">Documentation</a>
+            <a href="/" className="hover:text-blue-400 transition-colors">Examples</a>
+            <a href="/" className="hover:text-blue-400 transition-colors">Privacy</a>
           </div>
         </div>
       </footer>
@@ -145,6 +146,8 @@ function App() {
         onClose={() => setIsSettingsOpen(false)}
         geminiApiKey={geminiApiKey}
         onSaveApiKey={setGeminiApiKey}
+        geminiModel={geminiModel}
+        onSaveModel={setGeminiModel}
       />
     </div>
   );
