@@ -1,0 +1,71 @@
+name: Continuous Integration
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    qa:
+        name: QA (Lint & Test)
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci --legacy-peer-deps
+
+            - name: Lint source code
+              run: npm run lint
+
+            - name: Run unit tests
+              run: npm test -- --run
+
+    build:
+        name: Production Build
+        needs: qa
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci --legacy-peer-deps
+
+            - name: Build application
+              run: npm run build
+
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: build-artifact
+                  path: dist/
+                  retention-days: 7
+
+    security:
+        name: Security Audit
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+            - name: Audit for vulnerabilities
+              run: npm audit --audit-level=high || true # We allow this to fail for now but show output
