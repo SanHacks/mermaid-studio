@@ -133,18 +133,18 @@ export function useDiagram() {
         }
       ];
 
-      const generationConfig: any = {};
-      const tools = [{ googleSearch: {} }];
+      const config: any = {
+        tools: [{ googleSearch: {} }]
+      };
 
       if (geminiModel.includes('preview')) {
-        generationConfig.thinkingConfig = { thinkingBudget: -1 };
+        config.thinkingConfig = { thinkingBudget: -1 };
       }
 
       const result = await ai.models.generateContent({
         model: geminiModel,
         contents,
-        generationConfig,
-        tools
+        config
       });
 
       if (!result.text) throw new Error('AI returned an empty response');
