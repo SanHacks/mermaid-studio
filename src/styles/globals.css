@@ -38,6 +38,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -51,6 +55,39 @@ body {
     border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--accent-primary);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+input, textarea, select, button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .react-split-pane {
   position: relative !important;
 }
@@ -60,8 +97,8 @@ body {
 }
 
 .Resizer {
-  background: #000;
-  opacity: 0.1;
+  background: transparent;
+  opacity: 0.3;
   z-index: 1;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -69,10 +106,12 @@ body {
   -moz-background-clip: padding;
   -webkit-background-clip: padding;
   background-clip: padding-box;
+  transition: opacity 0.3s ease, background 0.3s ease;
 }
 
 .Resizer:hover {
-  opacity: 0.5;
+  opacity: 0.8;
+  background: var(--accent-primary);
 }
 
 .Resizer.horizontal {
@@ -90,13 +129,63 @@ body {
   border-left: 5px solid rgba(255, 255, 255, 0);
   border-right: 5px solid rgba(255, 255, 255, 0);
   cursor: col-resize;
+  position: relative;
+}
+
+.Resizer.vertical::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 40px;
+  background: var(--border-color);
+  border-radius: 2px;
+  transition: background 0.2s ease, height 0.2s ease;
+}
+
+.Resizer.vertical:hover::after {
+  background: var(--accent-primary);
+  height: 60px;
 }
 
 .SplitPane .Pane {
   overflow: auto;
 }
 
-/* Mermaid styling */
 .mermaid {
   font-family: var(--font-sans);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-primary);
 }

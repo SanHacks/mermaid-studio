@@ -29,7 +29,7 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
-    <div className={`min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] selection:bg-blue-500/30 font-inter transition-colors duration-300`}>
+    <div className={`min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] selection:bg-blue-500/30 font-inter`}>
       <Header
         onLoginClick={() => setIsAuthOpen(true)}
         appMode={appMode}
@@ -40,7 +40,7 @@ function App() {
       />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div className="mb-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 animate-fade-in">
           <div className="space-y-1">
             <div className="flex items-center gap-3 mb-1">
               <h2 className="text-2xl font-bold tracking-tight">Workspace</h2>
@@ -56,17 +56,19 @@ function App() {
           />
         </div>
 
-        <AIPrompt
-          onGenerate={generateAI}
-          aiProvider={aiProvider}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-        />
+        <div className="mb-8 animate-fade-in" style={{animationDelay: '0.1s'}}>
+          <AIPrompt
+            onGenerate={generateAI}
+            aiProvider={aiProvider}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+          />
+        </div>
 
-        <div className="mb-8">
+        <div className="mb-8 animate-fade-in" style={{animationDelay: '0.15s'}}>
           <ExampleGallery onSelect={setMermaidCode} />
         </div>
 
-        <div className="h-[75vh] flex flex-col bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] overflow-hidden shadow-2xl shadow-blue-900/10">
+        <div className="h-[75vh] flex flex-col bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] overflow-hidden shadow-2xl shadow-blue-900/10 transition-shadow duration-500 hover:shadow-3xl hover:shadow-blue-900/15">
           <SplitPane
             split="vertical"
             minSize={300}
@@ -91,8 +93,8 @@ function App() {
 
         {/* Features grid */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] hover:border-blue-500 transition-colors group">
-            <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+          <div className="p-6 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group cursor-pointer">
+            <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
               <span className="text-blue-500 font-bold">1</span>
             </div>
             <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">Write Code</h3>
@@ -101,8 +103,8 @@ function App() {
             </p>
           </div>
 
-          <div className="p-6 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] hover:border-slate-400 dark:hover:border-slate-500 transition-colors group">
-            <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+          <div className="p-6 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] hover:border-slate-400 dark:hover:border-slate-500 hover:shadow-lg hover:shadow-slate-500/10 transition-all duration-300 group cursor-pointer">
+            <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 group-hover:-rotate-3 transition-all duration-300">
               <span className="text-slate-600 dark:text-slate-400 font-bold">2</span>
             </div>
             <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">Real-time Preview</h3>
@@ -111,8 +113,8 @@ function App() {
             </p>
           </div>
 
-          <div className="p-6 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] hover:border-emerald-500 transition-colors group">
-            <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+          <div className="p-6 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-color)] hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group cursor-pointer">
+            <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
               <span className="text-emerald-500 font-bold">3</span>
             </div>
             <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">Export & Share</h3>

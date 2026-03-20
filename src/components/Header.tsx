@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({
     onSettingsClick
 }) => {
     return (
-        <header className="border-b border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
+        <header className="border-b border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-md sticky top-0 z-50 transition-all duration-300">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-[var(--accent-primary)] rounded-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 duration-300">
@@ -72,12 +72,12 @@ const Header: React.FC<HeaderProps> = ({
 
                     <div className="h-6 w-[1px] bg-[var(--border-color)] mx-2" />
 
-                    <button className="p-2 hover:bg-[var(--bg-secondary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" title="History">
+                    <button className="p-2 hover:bg-[var(--bg-secondary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-200" title="History">
                         <History className="w-5 h-5" />
                     </button>
                     <button
                         onClick={onSettingsClick}
-                        className="p-2 hover:bg-[var(--bg-secondary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" title="Settings"
+                        className="p-2 hover:bg-[var(--bg-secondary)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-200" title="Settings"
                     >
                         <Settings className="w-5 h-5" />
                     </button>
