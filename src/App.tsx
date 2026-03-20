@@ -16,8 +16,11 @@ function App() {
     mermaidCode, setMermaidCode,
     theme, setTheme,
     appMode, setAppMode,
+    aiProvider, setAiProvider,
     geminiApiKey, setGeminiApiKey,
     geminiModel, setGeminiModel,
+    ollamaUrl, setOllamaUrl,
+    ollamaModel, setOllamaModel,
     generateAI,
     user, logout
   } = useDiagram();
@@ -53,13 +56,11 @@ function App() {
           />
         </div>
 
-        {user && (
-          <AIPrompt
-            onGenerate={generateAI}
-            hasApiKey={!!geminiApiKey}
-            onOpenSettings={() => setIsSettingsOpen(true)}
-          />
-        )}
+        <AIPrompt
+          onGenerate={generateAI}
+          aiProvider={aiProvider}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+        />
 
         <div className="mb-8">
           <ExampleGallery onSelect={setMermaidCode} />
@@ -144,10 +145,16 @@ function App() {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        aiProvider={aiProvider}
+        onSaveProvider={setAiProvider}
         geminiApiKey={geminiApiKey}
         onSaveApiKey={setGeminiApiKey}
         geminiModel={geminiModel}
         onSaveModel={setGeminiModel}
+        ollamaUrl={ollamaUrl}
+        onSaveOllamaUrl={setOllamaUrl}
+        ollamaModel={ollamaModel}
+        onSaveOllamaModel={setOllamaModel}
       />
     </div>
   );

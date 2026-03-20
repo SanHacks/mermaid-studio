@@ -1,26 +1,39 @@
 import React, { useState } from 'react';
-import { X, Settings, Key, Shield, Info } from 'lucide-react';
+import { X, Settings, Key, Shield, Info, Server } from 'lucide-react';
 
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
+    aiProvider: 'ollama' | 'gemini';
+    onSaveProvider: (provider: 'ollama' | 'gemini') => void;
     geminiApiKey: string;
     onSaveApiKey: (key: string) => void;
     geminiModel: string;
     onSaveModel: (model: string) => void;
+    ollamaUrl: string;
+    onSaveOllamaUrl: (url: string) => void;
+    ollamaModel: string;
+    onSaveOllamaModel: (model: string) => void;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
-    isOpen, onClose, geminiApiKey, onSaveApiKey, geminiModel, onSaveModel
+    isOpen, onClose, aiProvider, onSaveProvider, geminiApiKey, onSaveApiKey, geminiModel, onSaveModel,
+    ollamaUrl, onSaveOllamaUrl, ollamaModel, onSaveOllamaModel
 }) => {
+    const [tempProvider, setTempProvider] = useState(aiProvider);
     const [tempKey, setTempKey] = useState(geminiApiKey);
     const [tempModel, setTempModel] = useState(geminiModel);
+    const [tempOllamaUrl, setTempOllamaUrl] = useState(ollamaUrl);
+    const [tempOllamaModel, setTempOllamaModel] = useState(ollamaModel);
 
     if (!isOpen) return null;
 
     const handleSave = () => {
+        onSaveProvider(tempProvider);
         onSaveApiKey(tempKey);
         onSaveModel(tempModel);
+        onSaveOllamaUrl(tempOllamaUrl);
+        onSaveOllamaModel(tempOllamaModel);
         onClose();
     };
 
@@ -56,53 +69,121 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                             </div>
                             <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl p-6 space-y-5">
                                 <div className="space-y-1.5">
-                                    <div className="flex justify-between items-center">
-                                        <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Gemini API Key</label>
-                                        <a
-                                            href="https://aistudio.google.com/app/apikey"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-[10px] text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
-                                        >
-                                            Get Key <Info className="w-2.5 h-2.5" />
-                                        </a>
-                                    </div>
-                                    <div className="relative">
-                                        <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
-                                        <input
-                                            type="password"
-                                            placeholder="Enter your Google Gemini API key"
-                                            className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl py-3 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all font-mono"
-                                            value={tempKey}
-                                            onChange={(e) => setTempKey(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Model Selection</label>
+                                    <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">AI Provider</label>
                                     <div className="relative">
                                         <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center">
                                             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                                         </div>
                                         <select
                                             className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl py-3 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all appearance-none cursor-pointer"
-                                            value={tempModel}
-                                            onChange={(e) => setTempModel(e.target.value)}
+                                            value={tempProvider}
+                                            onChange={(e) => setTempProvider(e.target.value as 'ollama' | 'gemini')}
                                         >
-                                            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Free)</option>
-                                            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                                            <option value="gemini-robotics-er-1.5-preview">Robotics Preview (Thinking)</option>
-                                            <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Exp</option>
+                                            <option value="ollama">Ollama (Local)</option>
+                                            <option value="gemini">Google Gemini</option>
                                         </select>
                                     </div>
-                                    <p className="text-[10px] text-[var(--text-secondary)] mt-2 leading-relaxed px-1 italic">
-                                        TIP: Models with 'preview' will enable Thinking Config.
-                                    </p>
                                 </div>
 
+                                {tempProvider === 'ollama' ? (
+                                    <>
+                                        <div className="space-y-1.5">
+                                            <div className="flex justify-between items-center">
+                                                <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Ollama URL</label>
+                                                <a
+                                                    href="https://ollama.com"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-[10px] text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
+                                                >
+                                                    Learn More <Info className="w-2.5 h-2.5" />
+                                                </a>
+                                            </div>
+                                            <div className="relative">
+                                                <Server className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="http://localhost:11434"
+                                                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl py-3 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all font-mono"
+                                                    value={tempOllamaUrl}
+                                                    onChange={(e) => setTempOllamaUrl(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Model</label>
+                                            <div className="relative">
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center">
+                                                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                                                </div>
+                                                <select
+                                                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl py-3 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all appearance-none cursor-pointer"
+                                                    value={tempOllamaModel}
+                                                    onChange={(e) => setTempOllamaModel(e.target.value)}
+                                                >
+                                                    <option value="minimax-m2.7:cloud">Minimax M2.7 Cloud</option>
+                                                </select>
+                                            </div>
+                                            <p className="text-[10px] text-[var(--text-secondary)] mt-2 leading-relaxed px-1 italic">
+                                                Make sure Ollama is running locally with the selected model installed.
+                                            </p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="space-y-1.5">
+                                            <div className="flex justify-between items-center">
+                                                <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Gemini API Key</label>
+                                                <a
+                                                    href="https://aistudio.google.com/app/apikey"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-[10px] text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
+                                                >
+                                                    Get Key <Info className="w-2.5 h-2.5" />
+                                                </a>
+                                            </div>
+                                            <div className="relative">
+                                                <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
+                                                <input
+                                                    type="password"
+                                                    placeholder="Enter your Google Gemini API key"
+                                                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl py-3 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all font-mono"
+                                                    value={tempKey}
+                                                    onChange={(e) => setTempKey(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider ml-1">Model Selection</label>
+                                            <div className="relative">
+                                                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center">
+                                                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                                                </div>
+                                                <select
+                                                    className="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl py-3 pl-10 pr-4 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all appearance-none cursor-pointer"
+                                                    value={tempModel}
+                                                    onChange={(e) => setTempModel(e.target.value)}
+                                                >
+                                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash (Free)</option>
+                                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                                                    <option value="gemini-robotics-er-1.5-preview">Robotics Preview (Thinking)</option>
+                                                    <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash Exp</option>
+                                                </select>
+                                            </div>
+                                            <p className="text-[10px] text-[var(--text-secondary)] mt-2 leading-relaxed px-1 italic">
+                                                TIP: Models with 'preview' will enable Thinking Config.
+                                            </p>
+                                        </div>
+                                    </>
+                                )}
+
                                 <p className="text-[10px] text-[var(--text-secondary)] mt-4 leading-relaxed px-1 border-t border-[var(--border-color)] pt-3">
-                                    Your data is stored locally in your browser. Calls are made directly to Google's Generative AI API.
+                                    {tempProvider === 'ollama' 
+                                        ? 'Your data stays local. Ollama runs entirely on your machine.'
+                                        : 'Your data is stored locally in your browser. Calls are made directly to Google\'s Generative AI API.'}
                                 </p>
                             </div>
                         </div>

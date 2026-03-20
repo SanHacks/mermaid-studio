@@ -47,12 +47,24 @@ export function useDiagram() {
     (localStorage.getItem('diagram-studio-app-mode') as 'light' | 'dark') || 'dark'
   );
 
+  const [aiProvider, setAiProvider] = useState<'ollama' | 'gemini'>(
+    (localStorage.getItem('diagram-studio-ai-provider') as 'ollama' | 'gemini') || 'ollama'
+  );
+
   const [geminiApiKey, setGeminiApiKey] = useState(
     localStorage.getItem('diagram-studio-gemini-key') || ''
   );
 
   const [geminiModel, setGeminiModel] = useState(
     localStorage.getItem('diagram-studio-gemini-model') || 'gemini-1.5-flash'
+  );
+
+  const [ollamaUrl, setOllamaUrl] = useState(
+    localStorage.getItem('diagram-studio-ollama-url') || 'http://localhost:11434'
+  );
+
+  const [ollamaModel, setOllamaModel] = useState(
+    localStorage.getItem('diagram-studio-ollama-model') || 'minimax-m2.7:cloud'
   );
 
   const [user, setUser] = useState<{ name: string; email: string } | null>(() => {
@@ -73,6 +85,15 @@ export function useDiagram() {
 
       const storedModel = localStorage.getItem('diagram-studio-gemini-model');
       if (storedModel) setGeminiModel(storedModel);
+
+      const storedProvider = localStorage.getItem('diagram-studio-ai-provider') as 'ollama' | 'gemini';
+      if (storedProvider) setAiProvider(storedProvider);
+
+      const storedOllamaUrl = localStorage.getItem('diagram-studio-ollama-url');
+      if (storedOllamaUrl) setOllamaUrl(storedOllamaUrl);
+
+      const storedOllamaModel = localStorage.getItem('diagram-studio-ollama-model');
+      if (storedOllamaModel) setOllamaModel(storedOllamaModel);
     };
 
     window.addEventListener('storage', handleStorage);
@@ -99,6 +120,21 @@ export function useDiagram() {
     localStorage.setItem('diagram-studio-gemini-model', geminiModel);
   }, [geminiModel]);
 
+  // Persist AI provider
+  useEffect(() => {
+    localStorage.setItem('diagram-studio-ai-provider', aiProvider);
+  }, [aiProvider]);
+
+  // Persist Ollama URL
+  useEffect(() => {
+    localStorage.setItem('diagram-studio-ollama-url', ollamaUrl);
+  }, [ollamaUrl]);
+
+  // Persist Ollama Model
+  useEffect(() => {
+    localStorage.setItem('diagram-studio-ollama-model', ollamaModel);
+  }, [ollamaModel]);
+
   // Link Mermaid theme with App Mode
   useEffect(() => {
     if (appMode === 'dark' && theme !== 'dark') {
@@ -120,44 +156,74 @@ export function useDiagram() {
 
   // AI Generation
   const generateAI = useCallback(async (prompt: string) => {
-    if (!geminiApiKey) throw new Error('Gemini API key is required');
+    if (aiProvider === 'ollama') {
+      if (!ollamaUrl) throw new Error('Ollama URL is required');
 
-    try {
-      const { GoogleGenAI } = await import('@google/genai');
-      const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+      try {
+        const response = await fetch(`${ollamaUrl}/api/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: ollamaModel,
+            prompt: `Generate only valid Mermaid diagram code for the following request. Do not include markdown formatting or explanations. Just the mermaid code. Request: ${prompt}`,
+            stream: false
+          })
+        });
 
-      const contents = [
-        {
-          role: 'user',
-          parts: [{ text: `Generate only valid Mermaid diagram code for the following request. Do not include markdown formatting or explanations. Just the mermaid code. Request: ${prompt}` }]
-        }
-      ];
+        if (!response.ok) throw new Error(`Ollama API error: ${response.statusText}`);
 
-      const config: any = {
-        tools: [{ googleSearch: {} }]
-      };
+        const data = await response.json();
+        if (!data.response) throw new Error('AI returned an empty response');
 
-      if (geminiModel.includes('preview')) {
-        config.thinkingConfig = { thinkingBudget: -1 };
+        let code = data.response.trim();
+        code = code.replace(/^```mermaid\n?/, '').replace(/\n?```$/, '');
+
+        setMermaidCode(code);
+        return code;
+      } catch (error: any) {
+        console.error('AI Generation failed:', error);
+        throw error;
       }
+    } else {
+      if (!geminiApiKey) throw new Error('Gemini API key is required');
 
-      const result = await ai.models.generateContent({
-        model: geminiModel,
-        contents,
-        config
-      });
+      try {
+        const { GoogleGenAI } = await import('@google/genai');
+        const ai = new GoogleGenAI({ apiKey: geminiApiKey });
 
-      if (!result.text) throw new Error('AI returned an empty response');
-      let code = result.text.trim();
-      code = code.replace(/^```mermaid\n?/, '').replace(/\n?```$/, '');
+        const contents = [
+          {
+            role: 'user',
+            parts: [{ text: `Generate only valid Mermaid diagram code for the following request. Do not include markdown formatting or explanations. Just the mermaid code. Request: ${prompt}` }]
+          }
+        ];
 
-      setMermaidCode(code);
-      return code;
-    } catch (error: any) {
-      console.error('AI Generation failed:', error);
-      throw error;
+        const config: any = {
+          tools: [{ googleSearch: {} }]
+        };
+
+        if (geminiModel.includes('preview')) {
+          config.thinkingConfig = { thinkingBudget: -1 };
+        }
+
+        const result = await ai.models.generateContent({
+          model: geminiModel,
+          contents,
+          config
+        });
+
+        if (!result.text) throw new Error('AI returned an empty response');
+        let code = result.text.trim();
+        code = code.replace(/^```mermaid\n?/, '').replace(/\n?```$/, '');
+
+        setMermaidCode(code);
+        return code;
+      } catch (error: any) {
+        console.error('AI Generation failed:', error);
+        throw error;
+      }
     }
-  }, [geminiApiKey, geminiModel]);
+  }, [aiProvider, geminiApiKey, geminiModel, ollamaUrl, ollamaModel]);
 
   // Save diagram to history
   const saveToHistory = useCallback((name: string, code: string, theme: string) => {
@@ -219,10 +285,16 @@ export function useDiagram() {
     setTheme,
     appMode,
     setAppMode,
+    aiProvider,
+    setAiProvider,
     geminiApiKey,
     setGeminiApiKey,
     geminiModel,
     setGeminiModel,
+    ollamaUrl,
+    setOllamaUrl,
+    ollamaModel,
+    setOllamaModel,
     generateAI,
     user,
     logout,

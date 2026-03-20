@@ -3,14 +3,16 @@ import { Sparkles, Loader2, AlertCircle, Settings } from 'lucide-react';
 
 interface AIPromptProps {
     onGenerate: (prompt: string) => Promise<string>;
-    hasApiKey: boolean;
+    aiProvider: 'ollama' | 'gemini';
     onOpenSettings: () => void;
 }
 
-const AIPrompt: React.FC<AIPromptProps> = ({ onGenerate, hasApiKey, onOpenSettings }) => {
+const AIPrompt: React.FC<AIPromptProps> = ({ onGenerate, aiProvider, onOpenSettings }) => {
     const [prompt, setPrompt] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const isConfigured = aiProvider === 'ollama';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,13 +37,13 @@ const AIPrompt: React.FC<AIPromptProps> = ({ onGenerate, hasApiKey, onOpenSettin
                     <Sparkles className="w-4 h-4 text-blue-500" />
                     <span className="text-sm font-bold text-[var(--text-primary)] tracking-tight">AI Assistant</span>
                 </div>
-                {!hasApiKey && (
+                {!isConfigured && (
                     <button
                         onClick={onOpenSettings}
                         className="flex items-center gap-1.5 text-[10px] font-bold text-amber-500 hover:text-amber-400 uppercase tracking-widest bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20 transition-all border-dashed"
                     >
                         <Settings className="w-3 h-3" />
-                        Setup API Key
+                        Setup AI
                     </button>
                 )}
             </div>
@@ -51,13 +53,13 @@ const AIPrompt: React.FC<AIPromptProps> = ({ onGenerate, hasApiKey, onOpenSettin
                     type="text"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder={hasApiKey ? "Describe the diagram you want to create..." : "Please set your Gemini API key in settings first"}
-                    disabled={!hasApiKey || loading}
+                    placeholder={isConfigured ? "Describe the diagram you want to create..." : "Please configure AI in settings first"}
+                    disabled={!isConfigured || loading}
                     className="w-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl py-3 pl-4 pr-12 text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all disabled:opacity-50"
                 />
                 <button
                     type="submit"
-                    disabled={!hasApiKey || loading || !prompt.trim()}
+                    disabled={!isConfigured || loading || !prompt.trim()}
                     className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg disabled:opacity-50 disabled:bg-slate-700 transition-all active:scale-90"
                 >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
